@@ -3,13 +3,10 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
+  - php
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='mailto:support@textiful.com?subject=Developer Key Request'>Request a Developer Key</a>
 
 includes:
   - errors
@@ -19,221 +16,96 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the Textiful API! You can use this API to trigger messages to the members that have joined one of your keywords.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+The Stripe API is organized around [REST](https://en.wikipedia.org/wiki/Representational_state_transfer). JSON is returned by all API responses, including errors.
 
 # Authentication
 
 > To authorize, use this code:
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+$ curl https://textiful.com/api/v1/messages \
+    -u API_KEY_ID:API_KEY_SECRET
+   
+# curl uses the -u flag to pass basic auth credentials
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
+```php
+$response = Httpful\Request::get('https://textiful.com/api/v1/messages')
+    ->authenticateWith(API_KEY_ID, API_KEY_SECRET)
+    ->send();    
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+> Make sure to replace `API_KEY_ID` & `API_KEY_SECRET` with your API Key Id & API Key Secret pair.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+> PHP examples use [Httpful](https://github.com/nategood/httpful) as an HTTP client.
+> Other HTTP clients - like [Guzzle](http://docs.guzzlephp.org/en/stable/) or [Requests](http://docs.python-requests.org/en/master/) - can be used but are not required.
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+Authenticate your account when using the API by including your secret API key in the request. You can manage your API keys in the [API interface](https://textiful.com/api_keys) on your account. Your API keys carry many privileges, so be sure to keep them secret! Do not share your secret API keys in publicly accessible areas such GitHub, client-side code, and so forth.
 
-`Authorization: meowmeowmeow`
+Authentication to the API is performed via [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication). Provide your API Key Id as the basic auth username value and your Api Key Secret as the password.
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+All API requests must be made over HTTPS. Calls made over plain HTTP will fail. API requests without authentication will also fail.
 </aside>
 
-# Kittens
 
-## Get All Kittens
+# Messages
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Send Text Message
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+$ curl https://textiful.com/api/v1/message \
+    -u API_KEY_ID:API_KEY_SECRET
+    -d mobileNum=1555555555 \
+    -d shortcode=345345 \
+    -d keyword=BOBLAW \
+    -d message="There is a new post on the Bob Loblaw Law Blog!" \    
 ```
 
-```javascript
-const kittn = require('kittn');
+```php
+$data = array(
+    "mobileNum" => "1555555555",
+    "shortcode" => "345345",
+    "keyword" => "BOBLAW",
+    "message" => "There is a new post on the Bob Loblaw Law Blog!"
+);
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+$response = Httpful\Request::post('https://textiful.com/api/v1/message')
+    ->authenticateWith(API_KEY_ID, API_KEY_SECRET)
+    ->body($data)
+    ->sends('form')
+    ->expects('json')
+    ->send();
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+    "status": "Message Queued",
+    "data": {
+        "mobileNum": "1555555555",
+        "shortcode": "345345",
+        "keyword": "BOBLAW",
+        "message": "There is a new post on the Bob Loblaw Law Blog!"
+    }
+}
 ```
 
-This endpoint retrieves all kittens.
+This endpoint sends a text message to the specified phone number. The number must be previously opted-in to the passed keyword otherwise the request will be rejected.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST http://textiful.com/api/v1/message`
 
 ### Query Parameters
 
-Parameter | Default | Description
+Parameter | Description | Details
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+mobileNum | 10 digit phone number to sent the text message to | Numeric characters only
+keyword | The keyword the user is subscribed to
+shortcode | The shortcode of the keyword | "345345" or "444999"
+message | The text message to send to the mobileNum
 
