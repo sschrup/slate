@@ -18,7 +18,7 @@ search: true
 
 Welcome to the Textiful API! You can use this API to trigger messages to the members that have joined one of your keywords.
 
-The Stripe API is organized around [REST](https://en.wikipedia.org/wiki/Representational_state_transfer). JSON is returned by all API responses, including errors.
+The Textiful API is organized around [REST](https://en.wikipedia.org/wiki/Representational_state_transfer). JSON is returned by all API responses, including errors.
 
 # Authentication
 
