@@ -22,7 +22,11 @@ The Stripe API is organized around [REST](https://en.wikipedia.org/wiki/Represen
 
 # Authentication
 
-> To authorize, use this code:
+There are two authentication methods for the API: HTTP Basic authentication and OAuth2. The easiest way to authenticate is using HTTP Basic authentication. Enter your API Key ID as the username and API Key Secret as the password. Your HTTP client library should have built-in support for Basic authentication, but here’s a quick example that shows how to authenticate with the -u option in curl:
+
+## Basic Auth
+
+> To authorize using Basic Auth, use this code:
 
 ```shell
 $ curl https://textiful.com/api/v1/messages \
@@ -49,6 +53,10 @@ Authentication to the API is performed via [HTTP Basic Auth](https://en.wikipedi
 <aside class="notice">
 All API requests must be made over HTTPS. Calls made over plain HTTP will fail. API requests without authentication will also fail.
 </aside>
+
+## OAuth2
+
+
 
 
 # Messages
@@ -109,3 +117,53 @@ keyword | The keyword the user is subscribed to
 shortcode | The shortcode of the keyword | "345345" or "444999"
 message | The text message to send to the mobileNum
 
+
+# Keywords
+
+## Get Keyword List
+
+```shell
+$ curl https://textiful.com/api/v1/keyword \
+    -u API_KEY_ID:API_KEY_SECRET    
+```
+
+```php
+$response = Httpful\Request::get('https://textiful.com/api/v1/keyword')
+    ->authenticateWith(API_KEY_ID, API_KEY_SECRET)
+    ->sendsAndExpects('json')
+    ->send();
+```
+
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "keyword_id": 123,
+        "keyword_shortcode_id": 787,
+        "shortcode": "345345",
+        "keyword": "BOBLAW",
+        "status": "active"
+    },
+    {
+        "keyword_id": 124,
+        "keyword_shortcode_id": 788,
+        "shortcode": "345345",
+        "keyword": "LUCILLE",
+        "status": "active"
+    },
+    {
+        "keyword_id": 125,
+        "keyword_shortcode_id": 789,
+        "shortcode": "444999",
+        "keyword": "BUSTER",
+        "status": "inactive"
+    }
+]
+```
+
+This endpoint returns an array of keywords created within Textiful for this account. The status can be set to either 'active' or 'inactive'. When displaying keywords, it is recommended to include the shortcode as well since the account may have the same keyword on multiple shortcodes - e.g. BOBLAW (345345).
+
+### HTTP Request
+
+`GET http://textiful.com/api/v1/keywords`
