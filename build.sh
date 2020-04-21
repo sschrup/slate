@@ -1,6 +1,6 @@
 bundle exec middleman build --clean
 
-cp -r ~/Sites/Slate/build ~/Sites/Textiful_v2/api
+cp -r ~/Sites/Textiful_v2_ApiDocs/build ~/Sites/Textiful_v2/api
 
 rm -r ~/Sites/Textiful_v2/api/docs
 
