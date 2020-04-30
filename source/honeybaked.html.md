@@ -92,14 +92,14 @@ Content-Type: application/json; charset=utf-8
 
 ```json
 {
-    "id": "15872340188292kw2fuqty55yp2b2",
-    "status": "sent",
-    "time": "2020-04-18T18:20:16Z",
+    "id": "5ea9f8ee9a57a27746124bd2",
+    "status": "queued",
     "storeId": "1638",
     "fromNumber": "+18645854267",
     "toNumber": "+12345678901",
     "text": "Your HoneyBaked Ham order is ready for curbside pickup at the Spartanburg location.",
-    "media": null
+    "media": null,
+    "time": "2020-04-18T18:20:16Z"
 }
 ```
 
@@ -112,7 +112,7 @@ Content-Type: application/json; charset=utf-8
 Parameter | Required | Type | Description
 --------- | ------- | ---- | -----------
 storeId | Required | `string` | The HoneyBaked Ham Store ID that will be sending the message.
-toNumber | Required | `string` | 10 digit phone number that will be sent the text message.
+toNumber | Required | `string` | 11-digit phone number that will be sent the text message starting with '1'.
 text | Required | `string` | The message that will be sent to the recipient. Limit of 160 characters.
 media | Optional | `string` | A URL to include as media attachments. If this field is included, the message will be sent as MMS. File size limited to 512KB.                  
 callbackUrl | Optional | `string` | A URL to receive message callback. Will be triggered if/when the message is confirmed as delivered.
@@ -122,13 +122,13 @@ callbackUrl | Optional | `string` | A URL to receive message callback. Will be t
 Parameter | Type | Description
 --------- | ---- | -----------
 id | `string` | The unique ID of this message.
-status | `string` | The current status of the message - sent, delivered, or failed.
-time | `string` | Timestamp of when message was created.
+status | `string` | The current status of the message - queued, sent, delivered, or failed.
 storeId | `string` | The HoneyBaked Ham Store ID.
-fromNumber | `string` | 10 digit phone number that sent the message.
-toNumber | `string` | 10 digit phone number that received the message.
+fromNumber | `string` | 11-digit phone number that sent the message starting with '1'.
+toNumber | `string` | 11-digit phone number that received the message starting with '1'.
 text | `string` | The message that was sent to the recipient.
 media | `string` | The URL of the media attachment. Null if none provided.
+time | `string` | Timestamp of when message was created.
 
 
 ## Message Callbacks
@@ -147,33 +147,33 @@ Content-Type: application/json; charset=utf-8
     "type"    : "message-delivered",
     "time"    : "2020-04-18T20:20:16Z",
     "message" : {
-        "id"         : "15872340188292kw2fuqty55yp2b2",
-        "status"     : "delivered",
-        "time"       : "2020-04-18T18:20:16Z",
+        "id"         : "5ea9f8ee9a57a27746124bd2",
         "storeId"    : "1638",
+        "status"     : "delivered",
         "fromNumber" : "+18645854267",
         "toNumber"   : "+12345678901",
         "text"       : "Your HoneyBaked Ham order is ready for curbside pickup at the Spartanburg location.",
-        "media"      : null
+        "media"      : null,
+        "time"       : "2020-04-18T18:20:16Z"
     }
 }
 ```
 
-### Message Delivered Parameters
+### Message Sent / Delivered Parameters
 
 Parameter | Type | Description
 --------- | ---- | -----------
-type | `string` | The Event type: "message-delivered".
+type | `string` | The Event type: "message-sent" or "message-delivered".
 time | `string` | The time of the event described in the callback.
 message | `object` | An object of message information.
 message.id | `string` | The unique ID of this message.
-message.status | `string` | The current status of the message - sent, delivered, or failed.
-message.time | `string` | Timestamp of when message was created.
 message.storeId | `string` | The HoneyBaked Ham Store ID.
-message.fromNumber | `string` | 10 digit phone number that sent the message.
-message.toNumber | `string` | 10 digit phone number that received the message.
+message.status | `string` | The current status of the message - sent or delivered.
+message.fromNumber | `string` | 11-digit phone number that sent the message starting with '1'.
+message.toNumber | `string` | 11-digit phone number that received the message starting with '1'.
 message.text | `string` | The message that was sent to the recipient.
 message.media | `string` | The URL of the media attachment. Null if none provided.
+message.time | `string` | Timestamp of when message was created.
 
 ```http
 POST /your_callback_url HTTP/1.1
@@ -184,14 +184,14 @@ Content-Type: application/json; charset=utf-8
     "time"        : "2020-04-18T20:20:16Z",
     "description" : "destination-rejected-message",
     "message"     : {
-        "id"         : "15872340188292kw2fuqty55yp2b2",
+        "id"         : "5ea9f8ee9a57a27746124bd2",
         "status"     : "delivered",
-        "time"       : "2020-04-18T18:20:16Z",
         "storeId"    : "1638",
         "fromNumber" : "+18645854267",
         "toNumber"   : "+12345678901",
         "text"       : "Your HoneyBaked Ham order is ready for curbside pickup at the Spartanburg location.",
-        "media"      : null
+        "media"      : null,
+        "time"       : "2020-04-18T18:20:16Z"
     }
 }
 ```
@@ -205,13 +205,13 @@ time | `string` | The time of the event described in the callback.
 description | `string` | Description of the failed message error.
 message | `object` | An object of message information
 message.id | `string` | The unique ID of this message.
-message.status | `string` | The current status of the message - sent, delivered, or failed.
-message.time | `string` | Timestamp of when message was created.
 message.storeId | `string` | The HoneyBaked Ham Store ID.
-message.fromNumber | `string` | 10 digit phone number that sent the message.
-message.toNumber | `string` | 10 digit phone number that received the message.
+message.status | `string` | The current status of the message - failed.
+message.fromNumber | `string` | 11-digit phone number that sent the message starting with '1'.
+message.toNumber | `string` | 11-digit phone number that received the message starting with '1'.
 message.text | `string` | The message that was sent to the recipient.
 message.media | `string` | The URL of the media attachment. Null if none provided.
+message.time | `string` | Timestamp of when message was created.
 
 # Members
 
@@ -225,60 +225,52 @@ Member status is store specific (e.g. an individual may have opted-out of receiv
 GET https://app.textiful.com/api/v1/hbh/stores/1638/members/12345678901 HTTP/1.1
 Content-Type: application/json; charset=utf-8
 Authorization: Basic YXBpQ2xpZW50SWQ6YXBpU2VjcmV0
-
-{
-    "storeId"     : "1638",
-    "toNumber"    : "+12345678901",
-    "text"        : "Your HoneyBaked Ham order is ready for curbside pickup at the Spartanburg location.",
-    "media"       : null,
-    "callbackUrl" : "https://developer.honeybaked.com/textiful/message/status"
-}
 ```
 
 ```shell   
-$ curl 'https://app.textiful.com/api/v1/hbh/stores/1638/members/12345678901' \
-      -u '{apiToken}:{apiSecret}'
-    '
+$ curl -X GET \
+      --url "https://app.textiful.com/api/v1/hbh/stores/1638/members/12345678901" \
+      -u '{username}:{password}'    
 ```
 
 > The above command returns JSON structured like this:
 
 ```http
-HTTP/1.1 200
+HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 ```
 
 ```json
 {
-    "storeId": "1638",
-    "member_id": "687681",
-    "member_sms": "+12345678901",
-    "member_email": null,
-    "is_sms_enabled": true,
-    "is_sms_blacklist": false,
-    "is_sms_invalid": false
+    "storeId"        : "1638",
+    "memberId"       : "1867865",
+    "memberSms"      : "+12345678901",
+    "memberEmail"    : null,
+    "isSmsEnabled"   : true,
+    "isSmsBlacklist" : false,
+    "isSmsInvalid"   : false
 }
 ```
 
 ### HTTP Request
 
-`GET https://app.textiful.com/api/v1/hbh/stores/{store_id}/members/{member_sms}`
+`GET https://app.textiful.com/api/v1/hbh/stores/{storeId}/members/{memberSms}`
 
 ### Query Parameters
 
 Parameter | Required | Type | Description
 --------- | ------- | ---- | -----------
-store_id | Required | `string` | The HoneyBaked Ham Store ID.
-member_sms | Required | `string` | 10 digit phone number of the member.
+storeId | Required | `string` | The HoneyBaked Ham Store ID.
+memberSms | Required | `string` | 11-digit phone number of the member.
 
 ### Response Parameters
 
 Parameter | Type | Description
 --------- | ---- | -----------
-store_id | `string` | The HoneyBaked Ham Store ID.
+storeId | `string` | The HoneyBaked Ham Store ID.
 member_id | `string` | The unique ID member.
-member_sms | `string` | 10 digit phone number of the member.
-member_email | `string` | The email address of the member. Returns null if not set.
-is_sms_enabled | `boolean` | If texting is enabled for the member + store combination.
-is_sms_blacklist | `boolean` | If the member has opted-out of all text messaging from this store. If true, no further text messages will be sent.
-is_sms_invalid | `boolean` | If the phone number cannot receive text messages - typically caused by the number being a landline. If true, no further text messages will be sent.
+memberSms | `string` | 11-digit phone number of the member starting with '1'.
+memberEmail | `string` | The email address of the member. Returns null if not set.
+isSmsEnabled | `boolean` | If texting is enabled for the member + store combination.
+isSmsBlacklist | `boolean` | If the member has opted-out of all text messaging from this store. If true, no further text messages will be sent.
+isSmsInvalid | `boolean` | If the phone number cannot receive text messages - typically caused by the number being a landline. If true, no further text messages will be sent.
